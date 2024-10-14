@@ -29,3 +29,11 @@ type MuscleGroup struct {
 	ID   int32
 	Name string
 }
+
+type User struct {
+	ID       int32
+	Username string
+	Email    string
+	Password string
+	Salt     string
+}
