@@ -12,13 +12,14 @@ This is an implementation of a workout tracker following the project idea on [ro
 # Milestones
 - [ ] Basic server setup
     - [ ] Server state (dev/production modes)
-    - [ ] Database setup
+    - [x] Database setup
 - [ ] Sign up/login system
-- [ ] Database schema
+- [x] Database schema
 - [ ] Database seeding
 - [ ] API endpoints for basic requirements
+- [ ] User authorization
 - [ ] JWT Authentication
 - [ ] API Documentation (OpenAPI)
-- [ ] Unit tests for endpoints (preferrably through TDD)
+- [x] Unit tests for endpoints (preferrably through TDD)
 - [ ] More requirements...
 - [ ] Basic HTML ([htmx](https://htmx.org/)?) frontend for CRUD visualization
