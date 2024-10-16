@@ -16,7 +16,7 @@ import (
 
 func main() {
 	godotenv.Load()
-	state := api.ServerState{}
+	state := api.ServerState{IsDev: true}
 
 	mux := http.NewServeMux()
 	server := http.Server{
