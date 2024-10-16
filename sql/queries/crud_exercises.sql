@@ -23,3 +23,6 @@ WHERE id = $1;
 -- name: DeleteExercise :exec
 DELETE FROM exercises
 WHERE id = $1;
+
+-- name: ResetExerciseId :exec
+SELECT setval('exercises_id_seq', 1, FALSE);

@@ -80,6 +80,15 @@ func (q *Queries) GetExercises(ctx context.Context) ([]Exercise, error) {
 	return items, nil
 }
 
+const resetExerciseId = `-- name: ResetExerciseId :exec
+SELECT setval('exercises_id_seq', 1, FALSE)
+`
+
+func (q *Queries) ResetExerciseId(ctx context.Context) error {
+	_, err := q.db.ExecContext(ctx, resetExerciseId)
+	return err
+}
+
 const updateExercise = `-- name: UpdateExercise :exec
 UPDATE exercises
 SET name = $2,

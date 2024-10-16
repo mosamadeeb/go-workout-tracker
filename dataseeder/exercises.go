@@ -38,5 +38,9 @@ func clearExercises(db *database.Queries) error {
 		}
 	}
 
+	if err = db.ResetExerciseId(context.TODO()); err != nil {
+		return err
+	}
+
 	return nil
 }
