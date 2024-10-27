@@ -73,6 +73,27 @@ func (q *Queries) GetCategory(ctx context.Context, id int32) (Category, error) {
 	return i, err
 }
 
+const getCategoryByName = `-- name: GetCategoryByName :one
+SELECT id, name FROM categories
+WHERE name = $1
+`
+
+func (q *Queries) GetCategoryByName(ctx context.Context, name string) (Category, error) {
+	row := q.db.QueryRowContext(ctx, getCategoryByName, name)
+	var i Category
+	err := row.Scan(&i.ID, &i.Name)
+	return i, err
+}
+
+const resetCategoryId = `-- name: ResetCategoryId :exec
+SELECT setval('categories_id_seq', 1, FALSE)
+`
+
+func (q *Queries) ResetCategoryId(ctx context.Context) error {
+	_, err := q.db.ExecContext(ctx, resetCategoryId)
+	return err
+}
+
 const updateCategory = `-- name: UpdateCategory :exec
 UPDATE categories
 SET name = $2

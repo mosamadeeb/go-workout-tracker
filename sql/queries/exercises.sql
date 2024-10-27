@@ -10,6 +10,10 @@ RETURNING *;
 DELETE FROM exercise_categories
 WHERE exercise_id = $1 AND category_id = $2;
 
+-- name: GetExerciseCategories :many
+SELECT category_id FROM exercise_categories
+WHERE exercise_id = $1;
+
 -- name: GetExercisesByCategories :many
 -- Returns exercises that have ALL of the given categories
 SELECT e.* FROM exercises e
@@ -27,6 +31,10 @@ RETURNING *;
 -- name: RemoveExerciseMuscleGroup :exec
 DELETE FROM exercise_muscle_groups
 WHERE exercise_id = $1 AND muscle_group_id = $2;
+
+-- name: GetExerciseMuscleGroups :many
+SELECT muscle_group_id FROM exercise_muscle_groups
+WHERE exercise_id = $1;
 
 -- name: GetExercisesByMuscleGroups :many
 -- Returns exercises that have ALL of the given muscle groups

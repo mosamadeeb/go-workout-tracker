@@ -9,6 +9,10 @@ RETURNING *;
 SELECT * FROM muscle_groups
 WHERE id = $1;
 
+-- name: GetMuscleGroupByName :one
+SELECT * FROM muscle_groups
+WHERE name = $1;
+
 -- name: GetMuscleGroups :many
 SELECT * FROM muscle_groups;
 
@@ -20,3 +24,6 @@ WHERE id = $1;
 -- name: DeleteMuscleGroup :exec
 DELETE FROM muscle_groups
 WHERE id = $1;
+
+-- name: ResetMuscleGroupId :exec
+SELECT setval('muscle_groups_id_seq', 1, FALSE);

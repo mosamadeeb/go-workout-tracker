@@ -10,6 +10,10 @@ RETURNING *;
 SELECT * FROM exercises
 WHERE id = $1;
 
+-- name: GetExerciseByName :one
+SELECT * FROM exercises
+WHERE name = $1;
+
 -- name: GetExercises :many
 -- TODO: Add pagination/limits or remove this query
 SELECT * FROM exercises;

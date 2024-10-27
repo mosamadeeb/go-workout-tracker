@@ -46,6 +46,18 @@ func (q *Queries) GetMuscleGroup(ctx context.Context, id int32) (MuscleGroup, er
 	return i, err
 }
 
+const getMuscleGroupByName = `-- name: GetMuscleGroupByName :one
+SELECT id, name FROM muscle_groups
+WHERE name = $1
+`
+
+func (q *Queries) GetMuscleGroupByName(ctx context.Context, name string) (MuscleGroup, error) {
+	row := q.db.QueryRowContext(ctx, getMuscleGroupByName, name)
+	var i MuscleGroup
+	err := row.Scan(&i.ID, &i.Name)
+	return i, err
+}
+
 const getMuscleGroups = `-- name: GetMuscleGroups :many
 SELECT id, name FROM muscle_groups
 `
@@ -71,6 +83,15 @@ func (q *Queries) GetMuscleGroups(ctx context.Context) ([]MuscleGroup, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const resetMuscleGroupId = `-- name: ResetMuscleGroupId :exec
+SELECT setval('muscle_groups_id_seq', 1, FALSE)
+`
+
+func (q *Queries) ResetMuscleGroupId(ctx context.Context) error {
+	_, err := q.db.ExecContext(ctx, resetMuscleGroupId)
+	return err
 }
 
 const updateMuscleGroup = `-- name: UpdateMuscleGroup :exec

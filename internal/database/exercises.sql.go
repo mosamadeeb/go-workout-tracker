@@ -53,6 +53,62 @@ func (q *Queries) AddExerciseMuscleGroup(ctx context.Context, arg AddExerciseMus
 	return i, err
 }
 
+const getExerciseCategories = `-- name: GetExerciseCategories :many
+SELECT category_id FROM exercise_categories
+WHERE exercise_id = $1
+`
+
+func (q *Queries) GetExerciseCategories(ctx context.Context, exerciseID int32) ([]int32, error) {
+	rows, err := q.db.QueryContext(ctx, getExerciseCategories, exerciseID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []int32
+	for rows.Next() {
+		var category_id int32
+		if err := rows.Scan(&category_id); err != nil {
+			return nil, err
+		}
+		items = append(items, category_id)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getExerciseMuscleGroups = `-- name: GetExerciseMuscleGroups :many
+SELECT muscle_group_id FROM exercise_muscle_groups
+WHERE exercise_id = $1
+`
+
+func (q *Queries) GetExerciseMuscleGroups(ctx context.Context, exerciseID int32) ([]int32, error) {
+	rows, err := q.db.QueryContext(ctx, getExerciseMuscleGroups, exerciseID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []int32
+	for rows.Next() {
+		var muscle_group_id int32
+		if err := rows.Scan(&muscle_group_id); err != nil {
+			return nil, err
+		}
+		items = append(items, muscle_group_id)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getExercisesByCategories = `-- name: GetExercisesByCategories :many
 SELECT e.id, e.name, e.description FROM exercises e
 JOIN exercise_categories ON id = exercise_id

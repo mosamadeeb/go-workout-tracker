@@ -9,6 +9,10 @@ RETURNING *;
 SELECT * FROM categories
 WHERE id = $1;
 
+-- name: GetCategoryByName :one
+SELECT * FROM categories
+WHERE name = $1;
+
 -- name: GetCategories :many
 SELECT * FROM categories;
 
@@ -20,3 +24,6 @@ WHERE id = $1;
 -- name: DeleteCategory :exec
 DELETE FROM categories
 WHERE id = $1;
+
+-- name: ResetCategoryId :exec
+SELECT setval('categories_id_seq', 1, FALSE);

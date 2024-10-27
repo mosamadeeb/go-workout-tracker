@@ -52,6 +52,18 @@ func (q *Queries) GetExercise(ctx context.Context, id int32) (Exercise, error) {
 	return i, err
 }
 
+const getExerciseByName = `-- name: GetExerciseByName :one
+SELECT id, name, description FROM exercises
+WHERE name = $1
+`
+
+func (q *Queries) GetExerciseByName(ctx context.Context, name string) (Exercise, error) {
+	row := q.db.QueryRowContext(ctx, getExerciseByName, name)
+	var i Exercise
+	err := row.Scan(&i.ID, &i.Name, &i.Description)
+	return i, err
+}
+
 const getExercises = `-- name: GetExercises :many
 SELECT id, name, description FROM exercises
 `

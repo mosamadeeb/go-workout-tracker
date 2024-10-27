@@ -15,7 +15,7 @@ This is an implementation of a workout tracker following the project idea on [ro
     - [x] Database setup
 - [ ] Sign up/login system
 - [x] Database schema
-- [ ] Database seeding
+- [x] Database seeding
 - [ ] API endpoints for basic requirements
 - [ ] User authorization
 - [ ] JWT Authentication

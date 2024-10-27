@@ -54,9 +54,41 @@ func seedDB(db *database.Queries) {
 	if err := seedExercises(db); err != nil {
 		log.Fatal(err)
 	}
+
+	if err := seedCategories(db); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := seedExerciseCategories(db); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := seedMuscleGroups(db); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := seedExerciseMuscleGroups(db); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func clearDB(db *database.Queries) {
+	if err := clearExerciseMuscleGroups(db); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := clearMuscleGroups(db); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := clearExerciseCategories(db); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := clearCategories(db); err != nil {
+		log.Fatal(err)
+	}
+
 	if err := clearExercises(db); err != nil {
 		log.Fatal(err)
 	}

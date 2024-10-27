@@ -7,7 +7,7 @@ import (
 )
 
 func seedExercises(db *database.Queries) error {
-	data := []database.CreateExerciseParams{
+	exercises := []database.CreateExerciseParams{
 		{Name: "Pushups", Description: "A pushup is a bodyweight exercise where you lower and raise your body using your arms while keeping your back straight."},
 		{Name: "Squats", Description: "A squat involves lowering your hips from a standing position and then returning to standing, engaging your legs and glutes."},
 		{Name: "Planks", Description: "A plank is a core exercise where you hold a position similar to a pushup but with your weight resting on your forearms."},
@@ -15,7 +15,7 @@ func seedExercises(db *database.Queries) error {
 		{Name: "Pullups", Description: "A pullup is an upper-body exercise where you hang from a bar and pull yourself up until your chin is above the bar."},
 	}
 
-	for _, item := range data {
+	for _, item := range exercises {
 		_, err := db.CreateExercise(context.TODO(), item)
 		if err != nil {
 			return err
