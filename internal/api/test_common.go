@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -47,10 +48,37 @@ type apiTestArgs struct {
 	r http.Request
 }
 
+type apiTestExpectedFunc func(r *http.Response) error
+
 type apiTestExpected struct {
-	code        int
-	contentType string
-	body        []byte
+	code         int
+	testExpected apiTestExpectedFunc
+}
+
+func apiTestExpectedContent(expectedContentType string, expectedBody []byte) apiTestExpectedFunc {
+	return func(res *http.Response) error {
+		contentType := res.Header.Get("Content-Type")
+		if expectedContentType != "" && contentType != expectedContentType {
+			return fmt.Errorf("Expected content type %s but got %s\n", expectedContentType, contentType)
+		}
+
+		switch contentType {
+		case "application/json":
+			var wantStruct, gotStruct map[string]interface{}
+
+			expectedJson := json.NewDecoder(bytes.NewReader(expectedBody))
+			resultJson := json.NewDecoder(res.Body)
+
+			expectedJson.Decode(&wantStruct)
+			resultJson.Decode(&gotStruct)
+
+			if !reflect.DeepEqual(wantStruct, gotStruct) {
+				return fmt.Errorf("Expected json body %v but got %v\n", wantStruct, gotStruct)
+			}
+		}
+
+		return nil
+	}
 }
 
 func apiTestHelper(t *testing.T, handler http.Handler, args apiTestArgs, expected apiTestExpected) {
@@ -75,24 +103,9 @@ func apiTestHelper(t *testing.T, handler http.Handler, args apiTestArgs, expecte
 		t.FailNow()
 	}
 
-	contentType := res.Header.Get("Content-Type")
-	if expected.contentType != "" && contentType != expected.contentType {
-		t.Logf("Expected content type %s but got %s\n", expected.contentType, contentType)
-		t.FailNow()
-	}
-
-	switch contentType {
-	case "application/json":
-		var wantStruct, gotStruct map[string]interface{}
-
-		expectedJson := json.NewDecoder(bytes.NewReader(expected.body))
-		resultJson := json.NewDecoder(res.Body)
-
-		expectedJson.Decode(&wantStruct)
-		resultJson.Decode(&gotStruct)
-
-		if !reflect.DeepEqual(wantStruct, gotStruct) {
-			t.Logf("Expected json body %v but got %v\n", wantStruct, gotStruct)
+	if expected.testExpected != nil {
+		if err := expected.testExpected(res); err != nil {
+			t.Logf("test expected func errored: %v\n", err)
 			t.FailNow()
 		}
 	}
