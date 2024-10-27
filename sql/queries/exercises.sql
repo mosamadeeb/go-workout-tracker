@@ -41,3 +41,12 @@ WHERE exercise_id = $1;
 SELECT e.* FROM exercises e
 JOIN exercise_muscle_groups ON id = exercise_id
 WHERE muscle_group_id = ANY(sqlc.arg('muscle_group_ids')::int[]);
+
+-- name: GetExercisesByCategoriesAndMuscleGroups :many
+-- Returns exercises that have ALL of the given categories and muscle groups
+-- If either only categories or muscle groups are needed, use the respective query instead of this one
+SELECT e.* FROM exercises e
+JOIN exercise_categories c ON e.id = c.exercise_id
+JOIN exercise_muscle_groups mg ON e.id = mg.exercise_id
+WHERE c.category_id = ANY(sqlc.arg('category_ids')::int[])
+AND mg.muscle_group_id = ANY(sqlc.arg('muscle_group_ids')::int[]);

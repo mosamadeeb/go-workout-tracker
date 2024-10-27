@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
+	"strings"
 )
 
 func HandleApi(mux *http.ServeMux, state ServerState) {
@@ -26,4 +28,22 @@ func respondError(w http.ResponseWriter, statusCode int, message string, err err
 	w.Header().Set("Content-Type", "text/plain")
 	w.WriteHeader(statusCode)
 	w.Write([]byte(fmt.Sprintf(message+": %v", err)))
+}
+
+func parseQueryList(paramList string) ([]int32, error) {
+	valueList := []int32{}
+	if paramList == "" {
+		return valueList, nil
+	}
+
+	for _, s := range strings.Split(paramList, ",") {
+		i, err := strconv.Atoi(s)
+		if err != nil {
+			return []int32{}, err
+		}
+
+		valueList = append(valueList, int32(i))
+	}
+
+	return valueList, nil
 }

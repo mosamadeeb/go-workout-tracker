@@ -139,6 +139,44 @@ func (q *Queries) GetExercisesByCategories(ctx context.Context, categoryIds []in
 	return items, nil
 }
 
+const getExercisesByCategoriesAndMuscleGroups = `-- name: GetExercisesByCategoriesAndMuscleGroups :many
+SELECT e.id, e.name, e.description FROM exercises e
+JOIN exercise_categories c ON e.id = c.exercise_id
+JOIN exercise_muscle_groups mg ON e.id = mg.exercise_id
+WHERE c.category_id = ANY($1::int[])
+AND mg.muscle_group_id = ANY($2::int[])
+`
+
+type GetExercisesByCategoriesAndMuscleGroupsParams struct {
+	CategoryIds    []int32
+	MuscleGroupIds []int32
+}
+
+// Returns exercises that have ALL of the given categories and muscle groups
+// If either only categories or muscle groups are needed, use the respective query instead of this one
+func (q *Queries) GetExercisesByCategoriesAndMuscleGroups(ctx context.Context, arg GetExercisesByCategoriesAndMuscleGroupsParams) ([]Exercise, error) {
+	rows, err := q.db.QueryContext(ctx, getExercisesByCategoriesAndMuscleGroups, pq.Array(arg.CategoryIds), pq.Array(arg.MuscleGroupIds))
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Exercise
+	for rows.Next() {
+		var i Exercise
+		if err := rows.Scan(&i.ID, &i.Name, &i.Description); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getExercisesByMuscleGroups = `-- name: GetExercisesByMuscleGroups :many
 SELECT e.id, e.name, e.description FROM exercises e
 JOIN exercise_muscle_groups ON id = exercise_id
